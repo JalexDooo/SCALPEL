@@ -44,7 +44,11 @@ SCALPEL significantly outperforms existing models and, more importantly, enables
 ```bash
 # Install dependencies
 pip install -r requirements.txt
+
+# BERT model save as [https://****]
 ```
+
+
 
 ---
 
