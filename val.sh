@@ -1,0 +1,2 @@
+# validation
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all' --model='m4' --dataset='BertOnehotLoader30' --lr=1e-3 --data_path='./other_model_data/ours/val_random.csv'
