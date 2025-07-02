@@ -42,16 +42,15 @@ SCALPEL significantly outperforms existing models and, more importantly, enables
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
-
-# BERT model save as [https://****]
+# pip install -r requirements.txt
+# pip package is in requirements.txt for python3.9
 ```
-
-
 
 ---
 
 🚀 Quick Start
+
+Step 0: Download the pre-trained BERT model at [Google Drive](https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link). Putting them in root directory.
 
 Step 1: Prepare Input Data
 	•	RNA sequences
@@ -93,8 +92,6 @@ If you use this work in your research, please cite:
   note={**}
 }
 ```
-
-⸻
 
 
 
