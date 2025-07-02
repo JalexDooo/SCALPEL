@@ -50,7 +50,7 @@ SCALPEL significantly outperforms existing models and, more importantly, enables
 
 🚀 Quick Start
 
-Step 0: Download the pre-trained BERT model at <a href="https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link" target="_blank">Google Drive</a>. Putting them in root directory.
+Step 0: Download the pre-trained BERT model at <a href="https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link" target="_blank" rel="noopener noreferrer">Google Drive</a>. Putting them in root directory.
 
 Step 1: Prepare Input Data
 	•	RNA sequences
