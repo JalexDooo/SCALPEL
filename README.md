@@ -12,7 +12,6 @@ We observed that structural dynamics across cell types can cause the same gRNA t
 - RNA sequence
 - In vivo icSHAPE data
 - RBP binding profiles
-- Transcript expression levels
 - Cell-type identity
 
 SCALPEL significantly outperforms existing models and, more importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across diverse cell types further confirm the biological relevance of structural context in gRNA efficacy, paving the way for **precision RNA-targeting therapeutics**.
