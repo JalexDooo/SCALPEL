@@ -1,6 +1,6 @@
 # 🧬 SCALPEL: Cell-Type Specific CRISPR-Cas13d gRNA Design using in vivo RNA Structure and Deep Learning
 
-**Official Implementation of SCALPEL – A Context-Aware Deep Learning Framework for Predicting Cas13d gRNA Efficacy Across Cellular Environments**
+**Official Implementation of SCALPEL – Deciphering Cellular Context for Efficient and cell type-Specific CRISPR-Cas13d gRNA Design using in vivo RNA structure and deep learning**
 
 ![SCALPEL Architecture](Figs/model.png)
 
@@ -9,10 +9,9 @@ The efficacy and tissue specificity of RNA therapeutic tools is critical for the
 
 We observed that structural dynamics across cell types can cause the same gRNA to exhibit divergent knockdown efficiency. RBPs, by stabilizing single-stranded regions, positively modulate gRNA function. Leveraging these insights and ∼290,000 published RfxCas13d screen data, we developed **SCALPEL**, a deep learning model that integrates:
 
-- RNA sequence
+- Target and gRNA sequence
 - In vivo icSHAPE data
 - RBP binding profiles
-- Cell-type identity
 
 SCALPEL significantly outperforms existing models and, more importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across diverse cell types further confirm the biological relevance of structural context in gRNA efficacy, paving the way for **precision RNA-targeting therapeutics**.
 
@@ -20,11 +19,14 @@ SCALPEL significantly outperforms existing models and, more importantly, enables
 
 ## 🧠 Key Features
 
-- 🔬 In vivo structure-aware Cas13d gRNA activity modeling  
-- 🧬 Integration of RNA sequence, icSHAPE reactivity, RBP binding, expression levels  
-- 🧠 Transformer-based architecture for context modeling  
-- 🔁 Generalizable across multiple cell types  
-- 🎯 Enables precision knockdown design for therapeutics and functional genomics  
+
+- 🧬 Integrating in vivo RNA secondary structure data and cell type-specific RBP binding profile
+- 🧠 Transformer-based architecture for context modeling
+- 🔁 Accurately predict on-target effects of gRNAs
+- 🎯 Assist in designing high-specificity gRNAs for different cellular context
+- 🔬 Facilitate the design of gRNAs for animal models
+
+
 
 ---
 
@@ -103,13 +105,13 @@ If you use this work in your research, please cite:
 We sincerely thank the following contributors and institutions for their support:
 
 - **Collaborating Labs and Institutes**  
-  We thank the Bioinformatics Group and SubLab at Shandong University for providing insightful discussions and access to unpublished structural datasets.
+  We thank the Bioinformatics Group and Sunlab at Shandong University for providing insightful discussions.
 
 - **Funding Support**  
   This work was supported by the National Natural Science Foundation of China (No.32300521, No.32422013 and No.82341086); the Open Grant from the Pingyuan Laboratory (No.2023PY-OP-0104); the State Key Laboratory of Microbial Technology Open Projects Fund (No.M2023-20; the Intramural Joint Program Fund of the State Key Laboratory of Microbial Technology (NO.SKLMTIJP-2024-02); the Double-First Class Initiative of Shandong University School of Life Sciences; the Young Innovation Team of Shandong Higher Education Institutions, the Taishan Scholars Youth Expert Program of Shandong Province, and the Program of Shandong University Qilu Young Scholars.
 
 - **Data Sources**  
-  We gratefully acknowledge publicly available CRISPR screen data from [Wessels et al., 2020], as well as icSHAPE and eCLIP datasets from SunLab.
+  We gratefully acknowledge publicly available CRISPR screen data from [Wessels et al., 2020].
 
 - **Open-source Tools**  
   This project builds upon many open-source tools and libraries, including PyTorch, Scikit-learn, and Biopython.
