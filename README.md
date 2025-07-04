@@ -111,7 +111,7 @@ We sincerely thank the following contributors and institutions for their support
   This work was supported by the National Natural Science Foundation of China (No.32300521, No.32422013 and No.82341086); the Open Grant from the Pingyuan Laboratory (No.2023PY-OP-0104); the State Key Laboratory of Microbial Technology Open Projects Fund (No.M2023-20; the Intramural Joint Program Fund of the State Key Laboratory of Microbial Technology (NO.SKLMTIJP-2024-02); the Double-First Class Initiative of Shandong University School of Life Sciences; the Young Innovation Team of Shandong Higher Education Institutions, the Taishan Scholars Youth Expert Program of Shandong Province, and the Program of Shandong University Qilu Young Scholars.
 
 - **Data Sources**  
-  We gratefully acknowledge publicly available CRISPR screen data from [Wessels et al., 2020].
+  We gratefully acknowledge available CRISPR screen data from ****.
 
 - **Open-source Tools**  
   This project builds upon many open-source tools and libraries, including PyTorch, Scikit-learn, and Biopython.
