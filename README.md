@@ -1,4 +1,4 @@
-# 🧬 SCALPEL: <u>S</u>pecific CRISPR-<u>C</u>as13d gRN<u>A</u> design through deep <u>L</u>earning <u>P</u>rediction using *in vivo* <u>E</u>xperimenta<u>l</u> RNA structure and binding information
+# 🧬 SCALPEL: S͎pecific CRISPR-C͎as13d gRNA͎ design through deep L͎earning P͎rediction using *in vivo* E͎xperimentaL͎ RNA structure and binding information
 
 **Official Implementation of SCALPEL – Deciphering Cellular Context for Efficient and cell type-Specific CRISPR-Cas13d gRNA Design using in vivo RNA structure and deep learning**
 
