@@ -5,12 +5,12 @@
 ![SCALPEL Architecture](Figs/model.png)
 
 ## 📖 Abstract
-The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. Here, by large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of **in vivo target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
+The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. Here, by large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of ** *in vivo* target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
 
  Leveraging this cell context information, along with approximately 290,000 RfxCas13d screening data, we developed SCALPEL, a deep learning model that predicts gRNA performance across various cellular environments. SCALPEL integrates:
 
 - **Both target and gRNA sequence**
-- **In vivo icSHAPE data acorss different cell lines**
+- ** *In vivo* icSHAPE data acorss different cell lines**
 - **Cell type-specific RBP binding profiles**
 
 SCALPEL significantly outperforms existing models, and, most importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across multiple cell lines demonstrate that cellular context significantly influences gRNA performance, even for identical targeting sequences, underscoring the feasibility of **cell type-specific knockdown** by targeting structural dynamic regions. SCALPEL can also facilitate designing highly efficient virus-targeting gRNAs and gRNAs that robustly knockdown maternal transcripts essential for early zebrafish development. Our method offers a novel approach to develop context-specific gRNAs, with potential to advance **tissue-** or **organ-specific** RNA therapies.
@@ -20,7 +20,7 @@ SCALPEL significantly outperforms existing models, and, most importantly, enable
 ## 🧠 Key Features
 
 
-- 🧬 Integrating in vivo RNA secondary structure data and cell type-specific RBP binding profile
+- 🧬 Integrating *in vivo* RNA secondary structure data and cell type-specific RBP binding profile
 - 🧠 Transformer-based architecture for context modeling
 - 🔁 Accurately predict on-target effects of gRNAs
 - 🎯 Assist in designing high-specificity gRNAs for different cellular context
@@ -77,7 +77,7 @@ python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_
 </p>
 
 <p align="center">
-  Fig.1 In vivo information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features.
+  Fig.1 *In vivo* information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features.
 </p>
 
 <p align="center">
@@ -95,7 +95,7 @@ python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_
 If you use this work in your research, please cite:
 ```
 @article{lu2025scalpel,
-  title={Deciphering Cellular Context for Efficient and Cell-Type Specific CRISPR-Cas13d gRNA Design using in vivo RNA structure and deep learning},
+  title={Deciphering Cellular Context for Efficient and Cell-Type Specific CRISPR-Cas13d gRNA Design using *in vivo* RNA structure and deep learning},
   author={**},
   journal={**},
   year={2025},
