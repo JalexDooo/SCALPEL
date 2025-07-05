@@ -77,7 +77,7 @@ python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_
 </p>
 
 <p align="center">
-  Fig.1 *In vivo* information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features.
+  Fig.1 _In vivo_ information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features.
 </p>
 
 <p align="center">
