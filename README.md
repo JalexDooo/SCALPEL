@@ -74,15 +74,19 @@ python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_
 
 <p align="center">
   <img src="Figs/res1.jpg" alt="Fig.1" width="300"/>
+</p>
+
+<p align="center">
+  Fig.1 In vivo information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features.
+</p>
+
+<p align="center">
   <img src="Figs/res2.jpg" alt="Fig.2" width="300"/>
 </p>
 
 <p align="center">
-  Fig.1 In vivo information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features &nbsp;&nbsp;&nbsp;&nbsp; Fig.2 In our validation screen, SCALPEL performed exceptionally well in predicting gRNAs with significantly dynamic efficacy.
+  Fig.2 In our validation screen, SCALPEL performed exceptionally well in predicting gRNAs with significantly dynamic efficacy.
 </p>
-
-<!-- ![SCALPEL Architecture](Figs/res1.jpg)
-![SCALPEL Architecture](Figs/res2.jpg) -->
 
 
 ---
