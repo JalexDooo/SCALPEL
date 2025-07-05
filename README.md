@@ -104,8 +104,6 @@ If you use this work in your research, please cite:
 ```
 
 
-
-
 ---
 
 ## 🙏 Acknowledgements
@@ -118,9 +116,6 @@ We sincerely thank the following contributors and institutions for their support
 - **Funding Support**  
   This work was supported by the National Natural Science Foundation of China (No.32300521, No.32422013 and No.82341086); the Open Grant from the Pingyuan Laboratory (No.2023PY-OP-0104); the State Key Laboratory of Microbial Technology Open Projects Fund (No.M2023-20; the Intramural Joint Program Fund of the State Key Laboratory of Microbial Technology (NO.SKLMTIJP-2024-02); the Double-First Class Initiative of Shandong University School of Life Sciences; the Young Innovation Team of Shandong Higher Education Institutions, the Taishan Scholars Youth Expert Program of Shandong Province, and the Program of Shandong University Qilu Young Scholars.
 
-- **Data Sources**  
-  We gratefully acknowledge available CRISPR screen data from ****.
-
 - **Open-source Tools**  
   This project builds upon many open-source tools and libraries, including PyTorch, Scikit-learn, and Biopython.
 
@@ -128,7 +123,15 @@ Special thanks to all community members and beta testers who provided feedback d
 
 ## 📚 Related Publication
 
-XXXXXX
+[1] Cheng, Xiaolong, et al. "Modeling CRISPR-Cas13d on-target and off-target effects using machine learning approaches." *Nature communications* 14.1 (2023): 752.
+
+[2] Wei, Jingyi, et al. "Deep learning and CRISPR-Cas13d ortholog discovery for optimized RNA targeting." *Cell Systems* 14.12 (2023): 1087-1102.
+
+[3] Wessels, Hans-Hermann, et al. "Prediction of on-target and off-target activity of CRISPR–Cas13d guide RNAs using deep learning." *Nature biotechnology* 42.4 (2024): 628-637.
+
+[4] Zhu, Haoran, et al. "Dynamic characterization and interpretation for protein-RNA interactions across diverse cellular conditions using HDRNet." Nature Communications 14.1 (2023): 6824.
+
+[5] Yin, Weijie, et al. "Ernie-rna: An rna language model with structure-enhanced representations." bioRxiv (2024): 2024-03.
 
 ## 📚 Experimental Data Avaliability
   The icSHAPE sequencing data for all cell lines reported in this study have been deposited in the NCBI Gene Expression Omnibus (GEO) with accession number GSE301234. The validation screening sequencing data for all libraries are available in GEO under accession number GSE30081. These sequencing data have also been deposited in National Genomics Data Center (NGDC) the with accession number PRJCA042228.
