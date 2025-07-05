@@ -73,7 +73,7 @@ python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_
 📊 Results
 
 <p align="center">
-  <img src="Figs/res1.jpg" alt="Fig.1" width="400"/>
+  <img src="Figs/res1.jpg" alt="Fig.1" width="350"/>
 </p>
 
 <p align="center">
