@@ -5,15 +5,15 @@
 ![SCALPEL Architecture](Figs/model.png)
 
 ## 📖 Abstract
-The efficacy and tissue specificity of RNA therapeutic tools is critical for their clinical translation. In this study, we conducted large-scale in vivo RNA structure profiling across four cell lines and systematically characterized how **target RNA secondary structure** and **RNA-binding proteins (RBPs)** influence CRISPR/Cas13d guide RNA (gRNA) activity.
+The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. Here, by large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of **in vivo target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
 
-We observed that structural dynamics across cell types can cause the same gRNA to exhibit divergent knockdown efficiency. RBPs, by stabilizing single-stranded regions, positively modulate gRNA function. Leveraging these insights and ∼290,000 published RfxCas13d screen data, we developed **SCALPEL**, a deep learning model that integrates:
+ Leveraging this cell context information, along with approximately 290,000 RfxCas13d screening data, we developed SCALPEL, a deep learning model that predicts gRNA performance across various cellular environments. SCALPEL integrates:
 
-- Target and gRNA sequence
-- In vivo icSHAPE data
-- RBP binding profiles
+- **Both target and gRNA sequence**
+- **In vivo icSHAPE data acorss different cell lines**
+- **Cell type-specific RBP binding profiles**
 
-SCALPEL significantly outperforms existing models and, more importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across diverse cell types further confirm the biological relevance of structural context in gRNA efficacy, paving the way for **precision RNA-targeting therapeutics**.
+SCALPEL significantly outperforms existing models, and, most importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across multiple cell lines demonstrate that cellular context significantly influences gRNA performance, even for identical targeting sequences, underscoring the feasibility of **cell type-specific knockdown** by targeting structural dynamic regions. SCALPEL can also facilitate designing highly efficient virus-targeting gRNAs and gRNAs that robustly knockdown maternal transcripts essential for early zebrafish development. Our method offers a novel approach to develop context-specific gRNAs, with potential to advance **tissue-** or **organ-specific** RNA therapies.
 
 ---
 
@@ -72,13 +72,17 @@ python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_
 
 📊 Results
 
-| Model                     | Pearson r | AUC | Cell-Type Specificity |
-|---------------------------|-----------|----------------|------------------------|
-| Sequence-only             | X      | X           | ✗                      |
-| + Structure (icSHAPE)     | X      | X           | ✓                      |
-| + RBP + Expression (Full) | X  | X       | **✓✓✓**                |
+<p align="center">
+  <img src="Figs/res1.jpg" alt="Fig.1" width="300"/>
+  <img src="Figs/res2.jpg" alt="Fig.2" width="300"/>
+</p>
 
-🧪 SCALPEL’s predictions are validated in independent Cas13d screens, demonstrating context-aware generalization.
+<p align="center">
+  Fig.1 In vivo information, including cell type-specific target RNA structure and protein binding probability (which also depend on cell type-specific structural data), significantly improves model performance when analyzing the impact of different features &nbsp;&nbsp;&nbsp;&nbsp; Fig.2 In our validation screen, SCALPEL performed exceptionally well in predicting gRNAs with significantly dynamic efficacy.
+</p>
+
+<!-- ![SCALPEL Architecture](Figs/res1.jpg)
+![SCALPEL Architecture](Figs/res2.jpg) -->
 
 
 ---
@@ -105,7 +109,7 @@ If you use this work in your research, please cite:
 We sincerely thank the following contributors and institutions for their support:
 
 - **Collaborating Labs and Institutes**  
-  We thank the Bioinformatics Group and Sunlab at Shandong University for providing insightful discussions.
+  We thank all members in Sunlab at Shandong University for providing insightful discussions.
 
 - **Funding Support**  
   This work was supported by the National Natural Science Foundation of China (No.32300521, No.32422013 and No.82341086); the Open Grant from the Pingyuan Laboratory (No.2023PY-OP-0104); the State Key Laboratory of Microbial Technology Open Projects Fund (No.M2023-20; the Intramural Joint Program Fund of the State Key Laboratory of Microbial Technology (NO.SKLMTIJP-2024-02); the Double-First Class Initiative of Shandong University School of Life Sciences; the Young Innovation Team of Shandong Higher Education Institutions, the Taishan Scholars Youth Expert Program of Shandong Province, and the Program of Shandong University Qilu Young Scholars.
@@ -121,3 +125,6 @@ Special thanks to all community members and beta testers who provided feedback d
 ## 📚 Related Publication
 
 XXXXXX
+
+## 📚 Experimental Data Avaliability
+  The icSHAPE sequencing data for all cell lines reported in this study have been deposited in the NCBI Gene Expression Omnibus (GEO) with accession number GSE301234. The validation screening sequencing data for all libraries are available in GEO under accession number GSE30081. These sequencing data have also been deposited in National Genomics Data Center (NGDC) the with accession number PRJCA042228.
