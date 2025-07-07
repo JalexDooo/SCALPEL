@@ -1,5 +1,26 @@
 # 🧬 SCALPEL: S͎pecific CRISPR-C͎as13d gRNA͎ design through deep L͎earning P͎rediction using *in vivo* E͎xperimentaL͎ RNA structure and binding information
 
+<p align="left">
+  <a href="https://github.com/JalexDooo/SCALPEL">
+    <img src="https://img.shields.io/badge/SCAPEL-python-orange">
+  </a>
+  <a href="https://github.com/JalexDooo/SCALPEL/stargazers">
+    <img src="https://img.shields.io/github/stars/JalexDooo/SCALPEL">
+  </a>
+  <a href="https://github.com/JalexDooo/SCALPEL/network/members">
+    <img src="https://img.shields.io/github/forks/JalexDooo/SCALPEL">
+  </a>
+  <a href="https://github.com/JalexDooo/SCALPEL/issues">
+    <img src="https://img.shields.io/github/issues/JalexDooo/SCALPEL">
+  </a>
+  <a href="https://github.com/JalexDooo/SCALPEL/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/JalexDooo/SCALPEL">
+  </a>
+  <!-- <a href="https://zenodo.org/badge/latestdoi/626892172">
+    <img src="https://zenodo.org/badge/626892172.svg" alt="DOI">
+  </a> -->
+</p>
+
 **Official Implementation of SCALPEL – Deciphering cellular context for efficient and cell type-specific CRISPR-Cas13d gRNA design using *in vivo* RNA structure and deep learning**
 
 ![SCALPEL Architecture](Figs/model.png)
@@ -54,20 +75,23 @@ SCALPEL significantly outperforms existing models, and, most importantly, enable
 
 Step 0: Download the pre-trained BERT model at <a href="https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link" target="_blank" rel="noopener noreferrer">Google Drive</a>. Putting them in root directory.
 
-Step 1: Prepare Input Data
+Step 1: Prepare Input Data Like `other_model_data/ours/demo_data.csv` file.
 	•	RNA sequences
 	•	icSHAPE reactivity profiles
 	•	RBP-binding tracks or matrices
 	•	gRNA labels from CRISPR screen
 
 
-Step 2: Train SCALPEL
+Step 2: Train SCALPEL.
+
+ - The `model_des` can be configured to include sequence features along with ant other features.
+ - The `data_des` can be configured as `cell_line:{}`, `match[i]`, `random`, `target_gene` referring to the `train.sh` file for specific usage.
 ```
 python3 -u logicArchi.py control --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random' --model='SCALPEL' --dataset='BertOnehotLoader30' --lr=1e-3 --data_path='other_model_data/ours/demo_data.csv'
 ```
-Step 3: Predict gRNA Efficacy
+Step 3: Predict gRNA Efficacy referring to the `val.sh` file for specific usage.
 ```
-python3 -u logicArchi.py val --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_random.csv'
+python3 -u logicArchi.py val --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path={Your validation file path}
 ```
 
 📊 Results

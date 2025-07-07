@@ -317,7 +317,7 @@ class BertOnehotLoader30(DataLoader):
 
         # print('cell_line: ', np.unique(self.cell_line))
         # print('target_gene: ', np.unique(self.target_gene))
-        device = torch.device('cuda:4')
+        device = torch.device('cuda:0')
 
         # extent sequence
         for idx in range(len(self.icshape)):
@@ -550,7 +550,7 @@ class BertOnehotLoader300(DataLoader):
 
         # print('cell_line: ', np.unique(self.cell_line))
         # print('target_gene: ', np.unique(self.target_gene))
-        device = torch.device('cuda:4')
+        device = torch.device('cuda:0')
 
         minn = 300
         # extent sequence

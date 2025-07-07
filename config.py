@@ -5,8 +5,6 @@ import warnings
 class Config(object):
     # global
 
-    # data_path = '/home/ai/Cas13d_gRNA_data/final/merged_data/all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
-    # data_path = '/home/ai/suiru_lu/Cas13d_gRNA_data/final/merged_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo.csv'
     data_path = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
     
     data_root = './data'

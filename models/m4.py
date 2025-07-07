@@ -575,7 +575,7 @@ class SCALPEL(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
 
-    def forward(self, x, device='cuda:3'):
+    def forward(self, x, device='cuda:0'):
         g_seq, t_seq, extt_seq, dr_seq, g_fold, \
         g_mfe, h_mfe, icshape, binding_p, \
         norm_label, p1, p2, \
