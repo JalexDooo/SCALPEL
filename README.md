@@ -68,11 +68,10 @@ SCALPEL significantly outperforms existing models, and, most importantly, enable
 **Step 0**: Download the pre-trained BERT model at <a href="https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link" target="_blank" rel="noopener noreferrer">Google Drive</a>. Putting them in root directory.
 
 **Step 1**: Prepare Input Data Like `other_model_data/ours/demo_data.csv` file. The icSHAPE sequencing data for all cell lines reported in this study have been deposited in the NCBI Gene Expression Omnibus (GEO) with accession number GSE301234. The validation screening sequencing data for all libraries are available in GEO under accession number GSE30081. These sequencing data have also been deposited in National Genomics Data Center (NGDC) the with accession number PRJCA042228.
-
-	•	RNA sequences
-	•	icSHAPE reactivity profiles
-	•	RBP-binding tracks or matrices from <a href="https://www.nature.com/articles/s41422-021-00476-y" target="_blank" rel="noopener noreferrer">PrismNet</a>.
-	•	Other features.
+- RNA sequences
+- icSHAPE reactivity profiles
+- RBP-binding tracks or matrices from <a href="https://www.nature.com/articles/s41422-021-00476-y" target="_blank" rel="noopener noreferrer">PrismNet</a>.
+- Other features.
 
 **Step 2**: Install python requirements in `requirements.txt` (Python3.9).
 
