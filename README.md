@@ -77,7 +77,7 @@ SCALPEL significantly outperforms existing models, and, most importantly, enable
 
 **Step 3**: Train SCALPEL.
 
- - The `model_des` can be configured to include sequence features along with ant other features.
+ - The `model_des` can be configured to include sequence features along with any other features.
  - The `data_des` can be configured as `cell_line:{}`, `match[i]`, `random`, `target_gene` referring to the `train.sh` file for specific usage.
 ```
 python3 -u logicArchi.py control --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random' --model='SCALPEL' --dataset='BertOnehotLoader30' --lr=1e-3 --data_path='other_model_data/ours/demo_data.csv'
