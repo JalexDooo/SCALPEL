@@ -55,46 +55,39 @@ SCALPEL significantly outperforms existing models, and, most importantly, enable
 ```
 .
 ├── dataset/                 # PyTorch dataloader and pre-processing.
+├── ckpt/                    # PyTorch training model weights.
 ├── models/                  # SCALPEL model architecture.
+├── other_model_data/        # Training data path.
 ├── loss_functions/          # Optional loss function.
 ├── logicArchi.py            # Main.
 ```
 ---
 
-## ⚙️ Environment Setup
-
-```bash
-# Install dependencies
-# pip install -r requirements.txt
-# pip package is in requirements.txt for python3.9
-```
-
----
-
-🚀 Quick Start
+## ⚙️ Environment Setup && 🚀 Quick Start
 
 Step 0: Download the pre-trained BERT model at <a href="https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link" target="_blank" rel="noopener noreferrer">Google Drive</a>. Putting them in root directory.
 
-Step 1: Prepare Input Data Like `other_model_data/ours/demo_data.csv` file.
+Step 1: Prepare Input Data Like `other_model_data/ours/demo_data.csv` file. The icSHAPE sequencing data for all cell lines reported in this study have been deposited in the NCBI Gene Expression Omnibus (GEO) with accession number GSE301234. The validation screening sequencing data for all libraries are available in GEO under accession number GSE30081. These sequencing data have also been deposited in National Genomics Data Center (NGDC) the with accession number PRJCA042228.
 	•	RNA sequences
 	•	icSHAPE reactivity profiles
-	•	RBP-binding tracks or matrices
-	•	gRNA labels from CRISPR screen
+	•	RBP-binding tracks or matrices from <a href="https://www.nature.com/articles/s41422-021-00476-y" target="_blank" rel="noopener noreferrer">PrismNet</a>.
+	•	Other features.
 
+Step 2: Install python requirements in `requirements.txt` (Python3.9).
 
-Step 2: Train SCALPEL.
+Step 3: Train SCALPEL.
 
  - The `model_des` can be configured to include sequence features along with ant other features.
  - The `data_des` can be configured as `cell_line:{}`, `match[i]`, `random`, `target_gene` referring to the `train.sh` file for specific usage.
 ```
 python3 -u logicArchi.py control --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random' --model='SCALPEL' --dataset='BertOnehotLoader30' --lr=1e-3 --data_path='other_model_data/ours/demo_data.csv'
 ```
-Step 3: Predict gRNA Efficacy referring to the `val.sh` file for specific usage.
+Step 4: Predict gRNA Efficacy referring to the `val.sh` file for specific usage.
 ```
 python3 -u logicArchi.py val --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path={Your validation file path}
 ```
 
-📊 Results
+## 📊 Results
 
 <p align="center">
   <img src="Figs/res1.jpg" alt="Fig.1" width="350"/>
@@ -111,22 +104,6 @@ python3 -u logicArchi.py val --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_
 <p align="center">
   Fig.2 In our validation screen, SCALPEL performed exceptionally well in predicting gRNAs with significantly dynamic efficacy.
 </p>
-
-
----
-🧾 Citation
-
-If you use this work in your research, please cite:
-```
-@article{lu2025scalpel,
-  title={Deciphering Cellular Context for Efficient and Cell-Type Specific CRISPR-Cas13d gRNA Design using *in vivo* RNA structure and deep learning},
-  author={**},
-  journal={**},
-  year={2025},
-  note={**}
-}
-```
-
 
 ---
 
@@ -157,5 +134,15 @@ Special thanks to all community members and beta testers who provided feedback d
 
 [5] Yin, Weijie, et al. "Ernie-rna: An rna language model with structure-enhanced representations." bioRxiv (2024): 2024-03.
 
-## Experimental Data Avaliability
-  The icSHAPE sequencing data for all cell lines reported in this study have been deposited in the NCBI Gene Expression Omnibus (GEO) with accession number GSE301234. The validation screening sequencing data for all libraries are available in GEO under accession number GSE30081. These sequencing data have also been deposited in National Genomics Data Center (NGDC) the with accession number PRJCA042228.
+## 🧾 Citation
+
+If you use this work in your research, please cite:
+```
+@article{lu2025scalpel,
+  title={Deciphering Cellular Context for Efficient and Cell-Type Specific CRISPR-Cas13d gRNA Design using *in vivo* RNA structure and deep learning},
+  author={**},
+  journal={**},
+  year={2025},
+  note={**}
+}
+```
