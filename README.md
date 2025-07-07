@@ -146,3 +146,8 @@ If you use this work in your research, please cite:
   note={**}
 }
 ```
+
+## 📄 License
+This project is covered under the **MIT License**.
+
+Thank you for using SCALPEL! Any questions, suggestions or advice are welcome!
