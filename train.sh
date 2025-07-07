@@ -133,31 +133,23 @@ python3 -u logicArchi.py control --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_m
 python3 -u logicArchi.py control --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --lr=1e-3 --data_path='/data3/SJD/Ca13TransformerDesigned3/shape_data/ours/train_random:full_icshape.csv'
 
 
-
-###
-Jindong Sun, jdsun@sdust.edu.cn, Shandong University of Science and Technology, College of Intelligent Equipment, Qingdao, 266590
-Jindong Sun, jdsun@sdust.edu.cn, Shandong University of Science and Technology, College of Intelligent Equipment, Taian, 271000
-
 # val
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_random.csv'
-
-
-# python3 -u logicArchi.py val --gpu_ids=[3] --model_des='seq' --data_des='random_all:HEK293FT' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
-
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_random.csv'
+python3 -u logicArchi.py val --gpu_ids=[3] --model_des='seq' --data_des='random_all:HEK293FT' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
 
 # random_all
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:A375.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:K562.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HAP1.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:A375.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:K562.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HAP1.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
 
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:A375.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:K562.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HAP1.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:A375.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:K562.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HAP1.csv'
-# python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:A375.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:K562.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HAP1.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:A375.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:K562.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HAP1.csv'
+python3 -u logicArchi.py val --gpu_ids=[4] --model_des='seq' --data_des='random_all:HAP1' --model='SCALPEL' --dataset='BertOnehotLoader30' --data_path='/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/val_vcell:HEK293FT.csv'
 
