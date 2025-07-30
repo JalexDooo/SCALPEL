@@ -441,6 +441,7 @@ def control(**kwargs):
     # if cfg.data_des == 'random_all':
     #     path = '/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/train_random.csv'
 
+    # You need provided the all data files to get normalization params.
     origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
 
     data = pd.read_csv(path, sep=',', encoding='GBK', header=None)
