@@ -681,7 +681,8 @@ def val(**kwargs):
 
 
     origin = path
-    origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+    # origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+    origin = 'other_model_data/ours/demo_data.csv'
     origin_data = pd.read_csv(origin, sep=',', encoding='GBK', header=None)
 
     
