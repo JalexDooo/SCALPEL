@@ -1,8 +1,6 @@
 <div align="center">
 
-# 🧬 SCALPEL
-
-### **S**pecific CRISPR-Cas13d gRNA design through deep **L**earning **P**rediction using *in vivo* **E**xperimenta**L** RNA structure and binding information
+# 🧬 SCALPEL: S͎pecific CRISPR-C͎as13d gRNA͎ design through deep L͎earning P͎rediction using *in vivo* E͎xperimentaL͎ RNA structure and binding information
 
 <p>
   <a href="https://github.com/JalexDooo/SCALPEL">
