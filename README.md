@@ -73,7 +73,10 @@ SCALPEL/
 
 ### Step 0 — Download Pre-trained Weights
 
-Download the pre-trained model weights from [Google Drive](https://drive.google.com/drive/folders/1nAjj8YMkwAucOYOFtUO9Y00ldci53isI?usp=sharing) and place the files under the `ckpt/` directory.
+Download the following pre-trained weights and place them in the specified directories:
+
+- **BERT model** → [Google Drive](https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link) — place files in the root directory
+- **Trained SCALPEL checkpoints** → [Google Drive](https://drive.google.com/drive/folders/1nAjj8YMkwAucOYOFtUO9Y00ldci53isI?usp=sharing) — place files under `ckpt/`
 
 ### Step 1 — Prepare Input Data
 
