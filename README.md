@@ -4,19 +4,19 @@
 
 <p>
   <a href="https://github.com/JalexDooo/SCALPEL">
-    <img src="https://img.shields.io/badge/SCALPEL-python-orange?style=flat-square&logo=python">
+    <img src="https://img.shields.io/badge/SCAPEL-python-orange">
   </a>
   <a href="https://github.com/JalexDooo/SCALPEL/stargazers">
-    <img src="https://img.shields.io/github/stars/JalexDooo/SCALPEL?style=flat-square">
+    <img src="https://img.shields.io/github/stars/JalexDooo/SCALPEL">
   </a>
   <a href="https://github.com/JalexDooo/SCALPEL/network/members">
-    <img src="https://img.shields.io/github/forks/JalexDooo/SCALPEL?style=flat-square">
+    <img src="https://img.shields.io/github/forks/JalexDooo/SCALPEL">
   </a>
   <a href="https://github.com/JalexDooo/SCALPEL/issues">
-    <img src="https://img.shields.io/github/issues/JalexDooo/SCALPEL?style=flat-square">
+    <img src="https://img.shields.io/github/issues/JalexDooo/SCALPEL">
   </a>
   <a href="https://github.com/JalexDooo/SCALPEL/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/JalexDooo/SCALPEL?style=flat-square">
+    <img src="https://img.shields.io/github/license/JalexDooo/SCALPEL">
   </a>
 </p>
 
@@ -28,7 +28,7 @@
 
 ---
 
-## 📖 Abstract
+## 🔬 Abstract
 
 The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. By large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of **_in vivo_ target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
 
@@ -44,7 +44,7 @@ SCALPEL significantly outperforms existing models and, most importantly, enables
 
 ---
 
-## 🧠 Key Features
+## ✨ Key Features
 
 - 🧬 Integrates *in vivo* RNA secondary structure data and cell type-specific RBP binding profiles
 - 🤖 Transformer-based architecture for deep context modeling
@@ -54,7 +54,7 @@ SCALPEL significantly outperforms existing models and, most importantly, enables
 
 ---
 
-## 📁 Repository Structure
+## 🗂️ Repository Structure
 
 ```
 SCALPEL/
@@ -69,7 +69,7 @@ SCALPEL/
 
 ---
 
-## ⚙️ Environment Setup & 🚀 Quick Start
+## 🛠️ Environment Setup & 🚀 Quick Start
 
 ### Step 0 — Download Pre-trained Weights
 
@@ -123,7 +123,7 @@ Refer to `val.sh` for more usage examples.
 
 ---
 
-## 📊 Results
+## 📈 Results
 
 <p align="center">
   <img src="Figs/res1.jpg" alt="Fig.1" width="380"/>
@@ -143,7 +143,7 @@ Refer to `val.sh` for more usage examples.
 
 ---
 
-## 🙏 Acknowledgements
+## 🤝 Acknowledgements
 
 We sincerely thank the following contributors and institutions for their support:
 
@@ -160,7 +160,7 @@ Special thanks to all community members and beta testers who provided feedback d
 
 ---
 
-## 📚 Related Publications
+## 📜 Related Publications
 
 1. Cheng, Xiaolong, et al. "Modeling CRISPR-Cas13d on-target and off-target effects using machine learning approaches." *Nature Communications* 14.1 (2023): 752.
 
@@ -174,7 +174,7 @@ Special thanks to all community members and beta testers who provided feedback d
 
 ---
 
-## 🧾 Citation
+## 🖊️ Citation
 
 If you use SCALPEL in your research, please cite:
 
@@ -191,7 +191,7 @@ If you use SCALPEL in your research, please cite:
 
 ---
 
-## 📄 License
+## ⚖️ License
 
 This project is released under the **[MIT License](https://github.com/JalexDooo/SCALPEL/blob/master/LICENSE)**.
 
