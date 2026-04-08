@@ -1,0 +1,1000 @@
+import math
+import copy
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.autograd import Variable
+from transformers import BertModel
+
+'''
+ssh -p 36586 root@connect.beijinga.seetacloud.com
+
+scp -rP 36586 all96_merge.h5 root@connect.beijinga.seetacloud.com:/root/autodl-tmp
+
+'''
+
+def get_clones(module, N):
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
+
+class Conv1d(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride=(1,),
+                 dilation=(1,), if_bias=False, relu=True, same_padding=True, bn=True):
+        super(Conv1d, self).__init__()
+        p0 = int((kernel_size[0] - 1)/2) if same_padding else 0
+        self.conv = nn.Conv1d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=p0,
+                              dilation=dilation, bias=True if if_bias else False)
+        self.bn = nn.BatchNorm1d(out_channels) if bn else None
+        self.relu = nn.ReLU(inplace=True) if relu else None
+
+    def forward(self, x):
+        x = self.conv(x)
+        if self.bn is not None:
+            x = self.bn(x)
+        if self.relu is not None:
+            x = self.relu(x)
+        x = F.dropout(x, 0.3, training=self.training)
+        return x
+
+class multiscale(nn.Module):
+    def __init__(self, in_channel, out_channel):
+        super(multiscale, self).__init__()
+
+        self.conv0 = Conv1d(in_channel, out_channel, kernel_size=(1,), same_padding=False)
+
+        self.conv1 = nn.Sequential(
+            Conv1d(in_channel, out_channel, kernel_size=(1,), same_padding=False, bn=False),
+            Conv1d(out_channel, out_channel, kernel_size=(3,), same_padding=True),
+        )
+
+        self.conv2 = nn.Sequential(
+            Conv1d(in_channel, out_channel, kernel_size=(1,), same_padding=False),
+            Conv1d(out_channel, out_channel, kernel_size=(5,), same_padding=True),
+            Conv1d(out_channel, out_channel, kernel_size=(5,), same_padding=True),
+        )
+
+        self.conv3 = nn.Sequential(
+            Conv1d(in_channel, out_channel, kernel_size=(1,), same_padding=False),
+            Conv1d(out_channel, out_channel, kernel_size=(7,), same_padding=True),
+            Conv1d(out_channel, out_channel, kernel_size=(7,), same_padding=True),
+            Conv1d(out_channel, out_channel, kernel_size=(7,), same_padding=True)
+        )
+
+    def forward(self, x):
+
+        x0 = self.conv0(x)
+        x1 = self.conv1(x)
+        x2 = self.conv2(x)
+        x3 = self.conv3(x)
+
+        x4 = torch.cat([x0, x1, x2, x3], dim=1)
+        return x4 + x
+
+class SEBlock(nn.Module):
+    def __init__(self, channel, reduction=2):
+        super(SEBlock, self).__init__()
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.fc = nn.Sequential(
+                nn.Linear(channel, channel // reduction),
+                nn.ReLU(inplace=True),
+                nn.Linear(channel // reduction, channel),
+                nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        b, c, _, _ = x.size()
+        y = self.avg_pool(x).view(b, c)
+        y = self.fc(y).view(b, c, 1, 1)
+        return y
+
+class ChannelAttention1d(nn.Module):
+    def __init__(self, channel, reduction=2):
+        super(ChannelAttention1d, self).__init__()
+        self.apool = nn.AdaptiveAvgPool1d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(channel, channel // reduction),
+            nn.ReLU(inplace=True),
+            nn.Linear(channel // reduction, channel),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        b, c, _ = x.size()
+        y = self.apool(x).view(b, c)
+        y = self.fc(y).view(b, c, 1)
+        return y
+
+class ValueAttention1d(nn.Module):
+    def __init__(self, deep, reduction=2):
+        super(ValueAttention1d, self).__init__()
+        self.apool = nn.AdaptiveAvgPool1d(1)
+        self.fc = nn.Sequential(
+            nn.Linear(deep, deep // reduction),
+            nn.ReLU(inplace=True),
+            nn.Linear(deep // reduction, deep),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        x = x.transpose(-1, -2)
+        b, d, c = x.size()
+        y = self.apool(x).view(b, d)
+        y = self.fc(y).view(b, 1, d)
+        return y
+
+class SEBlock1d(nn.Module):
+    def __init__(self, deep, reduction=8):
+        super(SEBlock1d, self).__init__()
+        self.fc = nn.Sequential(
+            nn.Linear(deep, deep//reduction),
+            nn.ReLU(True),
+            nn.Linear(deep//reduction, deep),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        x = self.fc(x)
+        return x
+
+class Encoder1(nn.Module):
+    def __init__(self, deep, N, heads, dropout):
+        super(Encoder1, self).__init__()
+        self.N = N
+        self.embed = FloatEmbedding(deep)
+        self.pe = PositionalEncoder(deep, dropout=dropout)
+        self.layers = get_clones(EncoderLayer(deep, heads, dropout), N)
+        self.norm = Norm(deep)
+
+    def forward(self, x, mask):
+        x = self.embed(x)
+        x = self.pe(x)
+        for i in range(self.N):
+            x = self.layers[i](x, mask)
+        return self.norm(x)
+
+class Encoder2(nn.Module):
+    '''No embedding.
+
+    '''
+    def __init__(self, deep, N, heads, dropout):
+        super(Encoder2, self).__init__()
+        self.N = N
+        self.embed = FloatEmbedding(deep)
+        self.pe = PositionalEncoder(deep, dropout=dropout)
+        self.layers = get_clones(EncoderLayer(deep, heads, dropout), N)
+        self.norm = Norm(deep)
+
+    def forward(self, x, mask):
+
+        x = self.pe(x)
+        for i in range(self.N):
+            x = self.layers[i](x, mask)
+        return self.norm(x)
+
+class m8_m3(nn.Module):
+    def __init__(self, des='seq'):
+        super(m8_m3, self).__init__()
+
+        self.fold, self.mfe1, self.mfe2, self.icshape, self.binding, \
+        self.rpkm, self.rt1, self.rt2, \
+        self.utr1, self.utr2, self.utr3, self.read_depth  = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+        self.feat_len = 1920
+
+        if 'fold' in des:
+            self.fold = 1
+            self.feat_len += 180
+        if 'mfe1' in des:
+            self.mfe1 = 1
+            self.feat_len += 1
+        if 'mfe2' in des:
+            self.mfe2 = 1
+            self.feat_len += 1
+        if 'icshape' in des:
+            self.icshape = 1
+            self.feat_len += 30
+        if 'binding' in des:
+            self.binding = 1
+            self.feat_len += 172
+        if 'rpkm' in des:
+            self.rpkm = 1
+            self.feat_len += 1
+        if 'relatelen' in des:
+            self.rt1 = 1
+            self.rt2 = 1
+            self.feat_len += 2
+        if 'utrrate' in des:
+            self.utr1, self.utr2, self.utr3 = 1, 1, 1
+            self.feat_len += 3
+
+        self.seq1 = nn.Sequential(
+            nn.Conv2d(2, 32, kernel_size=4, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.fold1 = nn.Sequential(
+            nn.Conv2d(1, 4, kernel_size=3, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=4, stride=1, padding='same'),
+            nn.ReLU()
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(4, 4, kernel_size=3, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.maxpool = nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1))
+        self.flat = nn.Flatten()
+        self.dropout1 = nn.Dropout(0.2)
+        self.dropout2 = nn.Dropout(0.2)
+
+        self.cls1 = nn.Sequential(
+            nn.Linear(self.feat_len, 128),
+            nn.Sigmoid(),
+            nn.Dropout(0.1)
+        )
+        self.cls2 = nn.Sequential(
+            nn.Linear(128, 32),
+            nn.Sigmoid(),
+            nn.Dropout(0.1)
+        )
+        self.out = nn.Sequential(
+            nn.Linear(32, 1),
+            nn.Sigmoid()
+        )
+        nn.Linear(32, 1)
+
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+
+    def forward(self, x, device):
+        g_seq, t_seq, extt_seq, dr_seq, g_fold, \
+        g_mfe, h_mfe, icshape, binding_p, \
+        norm_label, p1, p2, \
+        rpkm, \
+        st_relate_len, ed_relate_len, \
+        utr5_rate, cds_rate, utr3_rate, read_depth, \
+        cell_line, target_gene = x
+
+        g_seq = g_seq.to(device)
+        t_seq = t_seq.to(device)
+        g_fold = g_fold.to(device)
+        g_mfe = g_mfe.to(device)
+        h_mfe = h_mfe.to(device)
+        icshape = icshape.to(device)
+        binding_p = binding_p.to(device)
+        rpkm = rpkm.to(device)
+        st_relate_len = st_relate_len.to(device)
+        ed_relate_len = ed_relate_len.to(device)
+        utr5_rate = utr5_rate.to(device)
+        cds_rate = cds_rate.to(device)
+        utr3_rate = utr3_rate.to(device)
+
+        g_seq = g_seq.unsqueeze(-1).permute(0, 3, 1, 2)
+        t_seq = t_seq.unsqueeze(-1).permute(0, 3, 1, 2)
+        g_fold = g_fold.unsqueeze(-1).permute(0, 3, 1, 2)
+
+        seq = torch.concat([g_seq, t_seq], dim=1)
+
+        seq1 = self.seq1(seq)
+        seq1 = self.conv1(seq1)
+        seq1 = self.maxpool(seq1)
+        seq1 = self.flat(seq1)
+        seq1 = self.dropout1(seq1)
+        features = seq1
+
+        if self.fold:
+            fold1 = self.fold1(g_fold)
+            fold1 = self.conv2(fold1)
+            fold1 = self.maxpool(fold1)
+            fold1 = self.flat(fold1)
+            fold1 = self.dropout2(fold1)
+            features = torch.concat([features, fold1], dim=1)
+
+        if self.mfe1 | self.mfe2:
+            features = torch.concat([features, g_mfe], dim=1)
+            features = torch.concat([features, h_mfe], dim=1)
+        if self.icshape:
+            features = torch.concat([features, icshape], dim=1)
+        if self.binding:
+            features = torch.concat([features, binding_p], dim=1)
+        if self.rpkm:
+            features = torch.concat([features, rpkm], dim=1)
+        if self.rt1 | self.rt2:
+            features = torch.concat([features, st_relate_len], dim=1)
+            features = torch.concat([features, ed_relate_len], dim=1)
+        if self.utr1 | self.utr2 | self.utr3:
+            features = torch.concat([features, utr5_rate], dim=1)
+            features = torch.concat([features, cds_rate], dim=1)
+            features = torch.concat([features, utr3_rate], dim=1)
+
+        cls = self.cls1(features)
+        cls = self.cls2(cls)
+        output = self.out(cls)
+
+        return output
+
+class m8_m4(nn.Module):
+    '''
+    Add bert embedding.
+    '''
+    def __init__(self, des='seq'):
+        super(m8_m4, self).__init__()
+
+        self.fold, self.mfe1, self.mfe2, self.icshape, self.binding, \
+        self.rpkm, self.rt1, self.rt2, \
+        self.utr1, self.utr2, self.utr3, self.read_depth, self.bert  = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+        self.feat_len = 1920
+
+        if 'bert' in des:
+            self.bert = 1
+
+            self.d_model = 256
+            self.feat_len += 768 + 768 + 2 * self.d_model
+            self.bert_model = BertModel.from_pretrained('./BERT_Model')
+
+            self.cnn_q_proj1 = nn.Linear(32, self.d_model)
+            self.bert_k_proj1 = nn.Linear(768, self.d_model)
+            self.bert_v_proj1 = nn.Linear(768, self.d_model)
+            self.cross_attn_cnn_bert = nn.MultiheadAttention(embed_dim=self.d_model, num_heads=4, batch_first=True)
+            self.norm1 = nn.LayerNorm(self.d_model)
+            self.dropout_attn1 = nn.Dropout(0.1)
+
+            self.bert_q_proj2 = nn.Linear(768, self.d_model)
+            self.cnn_k_proj2 = nn.Linear(32, self.d_model)
+            self.cnn_v_proj2 = nn.Linear(32, self.d_model)
+            self.cross_attn_bert_cnn = nn.MultiheadAttention(embed_dim=self.d_model, num_heads=4, batch_first=True)
+            self.norm2 = nn.LayerNorm(self.d_model)
+            self.dropout_attn2 = nn.Dropout(0.1)
+
+            self.ffn1 = nn.Sequential(
+                nn.Linear(self.d_model, 4 * self.d_model),
+                nn.GELU(),
+                nn.Linear(4 * self.d_model, self.d_model),
+                nn.Dropout(0.1)
+            )
+            self.norm_ffn1 = nn.LayerNorm(self.d_model)
+
+            self.ffn2 = nn.Sequential(
+                nn.Linear(self.d_model, 4 * self.d_model),
+                nn.GELU(),
+                nn.Linear(4 * self.d_model, self.d_model),
+                nn.Dropout(0.1)
+            )
+            self.norm_ffn2 = nn.LayerNorm(self.d_model)
+
+        if 'fold' in des:
+            self.fold = 1
+            self.feat_len += 180
+        if 'mfe1' in des:
+            self.mfe1 = 1
+            self.feat_len += 1
+        if 'mfe2' in des:
+            self.mfe2 = 1
+            self.feat_len += 1
+        if 'icshape' in des:
+            self.icshape = 1
+            self.feat_len += 30
+        if 'binding' in des:
+            self.binding = 1
+            self.feat_len += 172
+        if 'rpkm' in des:
+            self.rpkm = 1
+            self.feat_len += 1
+        if 'relatelen' in des:
+            self.rt1 = 1
+            self.rt2 = 1
+            self.feat_len += 2
+        if 'utrrate' in des:
+            self.utr1, self.utr2, self.utr3 = 1, 1, 1
+            self.feat_len += 3
+
+        self.seq1 = nn.Sequential(
+            nn.Conv2d(2, 32, kernel_size=4, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.fold1 = nn.Sequential(
+            nn.Conv2d(1, 4, kernel_size=3, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=4, stride=1, padding='same'),
+            nn.ReLU()
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(4, 4, kernel_size=3, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.maxpool = nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1))
+        self.flat = nn.Flatten()
+        self.dropout1 = nn.Dropout(0.2)
+        self.dropout2 = nn.Dropout(0.2)
+        self.dropout3 = nn.Dropout(0.2)
+
+        self.bn_features = nn.BatchNorm1d(self.feat_len)
+        self.cls1 = nn.Sequential(
+            nn.Linear(self.feat_len, 1024),
+            nn.BatchNorm1d(1024),
+            nn.ReLU(),
+            nn.Dropout(0.2)
+        )
+        self.cls2 = nn.Sequential(
+            nn.Linear(1024, 256),
+            nn.BatchNorm1d(256),
+            nn.ReLU(),
+            nn.Dropout(0.2)
+        )
+        self.cls3 = nn.Sequential(
+            nn.Linear(256, 32),
+            nn.BatchNorm1d(32),
+            nn.ReLU(),
+            nn.Dropout(0.1)
+        )
+        self.out = nn.Sequential(
+            nn.Linear(32, 1)
+        )
+
+        self.seq_se = SEBlock1d(1920, 32)
+
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+
+    def forward(self, x, device='cuda:3'):
+        g_seq, t_seq, extt_seq, dr_seq, g_fold, \
+        g_mfe, h_mfe, icshape, binding_p, \
+        norm_label, p1, p2, \
+        rpkm, \
+        st_relate_len, ed_relate_len, \
+        utr5_rate, cds_rate, utr3_rate, read_depth, \
+        cell_line, target_gene, input_ids, attention_mask, token_type_ids = x
+
+        input_ids = input_ids.to(device)
+        attention_mask = attention_mask.to(device)
+        token_type_ids = token_type_ids.to(device)
+
+        g_seq = g_seq.to(device)
+        t_seq = t_seq.to(device)
+        g_fold = g_fold.to(device)
+        g_mfe = g_mfe.to(device)
+        h_mfe = h_mfe.to(device)
+        icshape = icshape.to(device)
+        binding_p = binding_p.to(device)
+        rpkm = rpkm.to(device)
+        st_relate_len = st_relate_len.to(device)
+        ed_relate_len = ed_relate_len.to(device)
+        utr5_rate = utr5_rate.to(device)
+        cds_rate = cds_rate.to(device)
+        utr3_rate = utr3_rate.to(device)
+
+        g_seq = g_seq.unsqueeze(-1).permute(0, 3, 1, 2)
+        t_seq = t_seq.unsqueeze(-1).permute(0, 3, 1, 2)
+        g_fold = g_fold.unsqueeze(-1).permute(0, 3, 1, 2)
+
+        seq = torch.cat([g_seq, t_seq], dim=1)
+
+        seq1 = self.seq1(seq)
+        seq1 = self.conv1(seq1)
+
+        seq1 = self.maxpool(seq1)
+
+        seq_flat = self.flat(seq1)
+
+        seq1_d = self.dropout1(seq_flat)
+
+        seq_se = self.seq_se(seq1_d)
+        seq_se_res = seq_se * seq1_d + seq1_d
+        features = seq_se_res
+
+        if self.bert:
+
+            bert_outputs = self.bert_model(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
+            bert_sequence_output = bert_outputs.last_hidden_state
+
+            cls_feat = bert_sequence_output[:, 0, :]
+
+            attention_mask_expanded = attention_mask.unsqueeze(-1).expand(bert_sequence_output.size()).float()
+            sum_embeddings = torch.sum(bert_sequence_output * attention_mask_expanded, 1)
+            sum_mask = torch.clamp(attention_mask_expanded.sum(1), min=1e-9)
+            bert_feat = sum_embeddings / sum_mask
+
+            N_batch = features.size(0)
+
+            cnn_seq = features.view(N_batch, 32, 60).transpose(1, 2)
+
+            padding_mask = (attention_mask == 0)
+
+            cnn_q1 = self.cnn_q_proj1(cnn_seq)
+            bert_k1 = self.bert_k_proj1(bert_sequence_output)
+            bert_v1 = self.bert_v_proj1(bert_sequence_output)
+
+            attn_out_cnn_bert, _ = self.cross_attn_cnn_bert(
+                query=cnn_q1,
+                key=bert_k1,
+                value=bert_v1,
+                key_padding_mask=padding_mask
+            )
+
+            attn_out_cnn_bert = self.dropout_attn1(attn_out_cnn_bert)
+            residual_cnn_bert = self.norm1(cnn_q1 + attn_out_cnn_bert)
+
+            ffn_out_cnn_bert = self.ffn1(residual_cnn_bert)
+            final_cnn_bert = self.norm_ffn1(residual_cnn_bert + ffn_out_cnn_bert)
+
+            pooled_cnn_bert = torch.mean(final_cnn_bert, dim=1)
+
+            bert_q2 = self.bert_q_proj2(bert_sequence_output)
+            cnn_k2 = self.cnn_k_proj2(cnn_seq)
+            cnn_v2 = self.cnn_v_proj2(cnn_seq)
+
+            attn_out_bert_cnn, _ = self.cross_attn_bert_cnn(query=bert_q2, key=cnn_k2, value=cnn_v2)
+
+            attn_out_bert_cnn = self.dropout_attn2(attn_out_bert_cnn)
+            residual_bert_cnn = self.norm2(bert_q2 + attn_out_bert_cnn)
+
+            ffn_out_bert_cnn = self.ffn2(residual_bert_cnn)
+            final_bert_cnn = self.norm_ffn2(residual_bert_cnn + ffn_out_bert_cnn)
+
+            attn_mask_dmodel = attention_mask.unsqueeze(-1).expand(final_bert_cnn.size()).float()
+            sum_attn_bert = torch.sum(final_bert_cnn * attn_mask_dmodel, 1)
+            sum_mask_bert = torch.clamp(attn_mask_dmodel.sum(1), min=1e-9)
+            pooled_bert_cnn = sum_attn_bert / sum_mask_bert
+
+            features = torch.cat([features, bert_feat, cls_feat, pooled_cnn_bert, pooled_bert_cnn], dim=1)
+
+        if self.fold:
+            fold1 = self.fold1(g_fold)
+            fold1 = self.conv2(fold1)
+            fold1 = self.maxpool(fold1)
+            fold1 = self.flat(fold1)
+            fold1d = self.dropout2(fold1)
+            features = torch.concat([features, fold1d], dim=1)
+
+        if self.mfe1:
+            features = torch.concat([features, g_mfe], dim=1)
+        if self.mfe2:
+            features = torch.concat([features, h_mfe], dim=1)
+        if self.icshape:
+            features = torch.concat([features, icshape], dim=1)
+        if self.binding:
+            features = torch.concat([features, binding_p], dim=1)
+        if self.rpkm:
+            features = torch.concat([features, rpkm], dim=1)
+        if self.rt1 | self.rt2:
+            features = torch.concat([features, st_relate_len], dim=1)
+            features = torch.concat([features, ed_relate_len], dim=1)
+        if self.utr1 | self.utr2 | self.utr3:
+            features = torch.concat([features, utr5_rate], dim=1)
+            features = torch.concat([features, cds_rate], dim=1)
+            features = torch.concat([features, utr3_rate], dim=1)
+
+        features = self.bn_features(features)
+        cls1 = self.cls1(features)
+        cls2 = self.cls2(cls1)
+        cls3 = self.cls3(cls2)
+        output = self.out(cls3)
+
+        return output
+
+class m8_m5(nn.Module):
+    '''
+    Remove global att.
+    '''
+    def __init__(self, des='seq'):
+        super(m8_m5, self).__init__()
+
+        self.fold, self.mfe1, self.mfe2, self.icshape, self.binding, \
+        self.rpkm, self.rt1, self.rt2, \
+        self.utr1, self.utr2, self.utr3, self.read_depth, self.bert  = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+
+        self.feat_len = 1920
+
+        if 'bert' in des:
+            self.bert = 1
+            self.feat_len += 1792
+        if 'fold' in des:
+            self.fold = 1
+            self.feat_len += 180
+        if 'mfe1' in des:
+            self.mfe1 = 1
+            self.feat_len += 1
+        if 'mfe2' in des:
+            self.mfe2 = 1
+            self.feat_len += 1
+        if 'icshape' in des:
+            self.icshape = 1
+            self.feat_len += 30
+        if 'binding' in des:
+            self.binding = 1
+            self.feat_len += 172
+        if 'rpkm' in des:
+            self.rpkm = 1
+            self.feat_len += 1
+        if 'relatelen' in des:
+            self.rt1 = 1
+            self.rt2 = 1
+            self.feat_len += 2
+        if 'utrrate' in des:
+            self.utr1, self.utr2, self.utr3 = 1, 1, 1
+            self.feat_len += 3
+
+        self.seq1 = nn.Sequential(
+            nn.Conv2d(2, 32, kernel_size=4, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.fold1 = nn.Sequential(
+            nn.Conv2d(1, 4, kernel_size=3, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(32, 32, kernel_size=4, stride=1, padding='same'),
+            nn.ReLU()
+        )
+        self.conv2 = nn.Sequential(
+            nn.Conv2d(4, 4, kernel_size=3, stride=1, padding='same'),
+            nn.ReLU()
+        )
+
+        self.maxpool = nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1))
+        self.flat = nn.Flatten()
+        self.dropout1 = nn.Dropout(0.2)
+        self.dropout2 = nn.Dropout(0.2)
+        self.dropout3 = nn.Dropout(0.2)
+
+        self.bn_features = nn.BatchNorm1d(self.feat_len)
+        self.cls1 = nn.Sequential(
+            nn.Linear(self.feat_len, 128),
+            nn.ReLU(),
+            nn.Dropout(0.1)
+        )
+        self.cls2 = nn.Sequential(
+            nn.Linear(128, 32),
+            nn.ReLU(),
+            nn.Dropout(0.1)
+        )
+        self.out = nn.Sequential(
+            nn.Linear(32, 1)
+        )
+
+        self.bert1 = Conv1d(768, 64, kernel_size=(1,), stride=1)
+        self.bert2 = multiscale(64, 16)
+
+        self.seq_se = SEBlock1d(1920, 32)
+        self.glob_att = SEBlock1d(self.feat_len, 32)
+
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
+
+    def forward(self, x, device):
+        g_seq, t_seq, extt_seq, dr_seq, g_fold, \
+        g_mfe, h_mfe, icshape, binding_p, \
+        norm_label, p1, p2, \
+        rpkm, \
+        st_relate_len, ed_relate_len, \
+        utr5_rate, cds_rate, utr3_rate, read_depth, \
+        cell_line, target_gene, bert_embedding = x
+
+        bert_embedding = bert_embedding.to(device)
+        g_seq = g_seq.to(device)
+        t_seq = t_seq.to(device)
+        g_fold = g_fold.to(device)
+        g_mfe = g_mfe.to(device)
+        h_mfe = h_mfe.to(device)
+        icshape = icshape.to(device)
+        binding_p = binding_p.to(device)
+        rpkm = rpkm.to(device)
+        st_relate_len = st_relate_len.to(device)
+        ed_relate_len = ed_relate_len.to(device)
+        utr5_rate = utr5_rate.to(device)
+        cds_rate = cds_rate.to(device)
+        utr3_rate = utr3_rate.to(device)
+
+        g_seq = g_seq.unsqueeze(-1).permute(0, 3, 1, 2)
+        t_seq = t_seq.unsqueeze(-1).permute(0, 3, 1, 2)
+        g_fold = g_fold.unsqueeze(-1).permute(0, 3, 1, 2)
+
+        seq = torch.concat([g_seq, t_seq], dim=1)
+
+        seq1 = self.seq1(seq)
+        seq1 = self.conv1(seq1)
+        seq1 = self.maxpool(seq1)
+        seq_flat = self.flat(seq1)
+        seq1 = self.dropout1(seq_flat)
+
+        features = seq1
+
+        if self.bert:
+            bert_embedding = bert_embedding.permute(0, 2, 1)
+            bert1 = self.bert1(bert_embedding)
+            bert2 = self.bert2(bert1)
+            bert_feat = self.flat(bert2)
+            bert_feat = self.dropout3(bert_feat)
+            features = torch.concat([features, bert_feat], dim=1)
+
+        if self.fold:
+            fold1 = self.fold1(g_fold)
+            fold1 = self.conv2(fold1)
+            fold1 = self.maxpool(fold1)
+            fold1 = self.flat(fold1)
+            fold1d = self.dropout2(fold1)
+            features = torch.concat([features, fold1d], dim=1)
+
+        if self.mfe1:
+            features = torch.concat([features, g_mfe], dim=1)
+        if self.mfe2:
+            features = torch.concat([features, h_mfe], dim=1)
+        if self.icshape:
+            features = torch.concat([features, icshape], dim=1)
+        if self.binding:
+            features = torch.concat([features, binding_p], dim=1)
+        if self.rpkm:
+            features = torch.concat([features, rpkm], dim=1)
+        if self.rt1 | self.rt2:
+            features = torch.concat([features, st_relate_len], dim=1)
+            features = torch.concat([features, ed_relate_len], dim=1)
+        if self.utr1 | self.utr2 | self.utr3:
+            features = torch.concat([features, utr5_rate], dim=1)
+            features = torch.concat([features, cds_rate], dim=1)
+            features = torch.concat([features, utr3_rate], dim=1)
+
+        features = self.bn_features(features)
+        cls1 = self.cls1(features)
+        cls2 = self.cls2(cls1)
+        output = self.out(cls2)
+
+        return output
+
+def attention(q, k, v, deep_k, mask=None, dropout=None):
+    scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(deep_k)
+
+    if mask is not None:
+        mask = mask.unsqueeze(1)
+        scores = scores.masked_fill(mask==0, -1e9)
+
+    scores = F.softmax(scores, dim=-1)
+
+    if dropout is not None:
+        scores = dropout(scores)
+
+    output = torch.matmul(scores, v)
+    return output
+
+class PositionalEncoder(nn.Module):
+    def __init__(self, deep, max_seq_len=2048, dropout=0.1):
+        super(PositionalEncoder, self).__init__()
+        self.deep = deep
+        self.dropout = nn.Dropout(dropout)
+        pe = torch.zeros(max_seq_len, deep)
+        for pos in range(max_seq_len):
+            for i in range(0, deep, 2):
+                pe[pos, i] = math.sin(pos/(10000 ** ((2*i)/deep) ))
+                pe[pos, i+1] = math.cos(pos/(10000 ** ((2*(i+1))/deep) ))
+        pe = pe.unsqueeze(0)
+        self.register_buffer('pe', pe)
+
+    def forward(self, x):
+        x = x * math.sqrt(self.deep)
+        seq_len = x.size(1)
+        pe = Variable(self.pe[:, :seq_len], requires_grad=False)
+        if x.is_cuda:
+            pe = pe.to(x.device)
+        x = x + pe
+        return self.dropout(x)
+
+class Norm(nn.Module):
+    def __init__(self, deep, eps=1e-6):
+        super(Norm, self).__init__()
+        self.deep = deep
+
+        self.alpha = nn.Parameter(torch.ones(self.deep))
+        self.bias = nn.Parameter(torch.zeros(self.deep))
+
+        self.eps = eps
+
+    def forward(self, x):
+        norm = self.alpha * (x-x.mean(dim=-1, keepdim=True)) / (x.std(dim=-1, keepdim=True)+self.eps) + self.bias
+        return norm
+
+class MultiHeadAttention(nn.Module):
+    def __init__(self, heads, deep, dropout=0.1):
+        super(MultiHeadAttention, self).__init__()
+        self.deep = deep
+        self.deep_k = deep // heads
+        self.head = heads
+
+        self.q_linear = nn.Linear(deep, deep)
+        self.v_linear = nn.Linear(deep, deep)
+        self.k_linear = nn.Linear(deep, deep)
+
+        self.dropout = nn.Dropout(dropout)
+        self.out = nn.Linear(deep, deep)
+
+    def forward(self, q, k, v, mask=None):
+        bz = q.size(0)
+
+        k = self.k_linear(k).view(bz, -1, self.head, self.deep_k)
+        q = self.q_linear(q).view(bz, -1, self.head, self.deep_k)
+        v = self.v_linear(v).view(bz, -1, self.head, self.deep_k)
+
+        k = k.transpose(1, 2)
+        q = q.transpose(1, 2)
+        v = v.transpose(1, 2)
+
+        scores = attention(q, k, v, self.deep_k, mask, self.dropout)
+
+        concat = scores.transpose(1, 2).contiguous().view(bz, -1, self.deep)
+        output = self.out(concat)
+        return output
+
+class FeedForward(nn.Module):
+    def __init__(self, deep, deep_feedforward=2048, dropout=0.1):
+        super(FeedForward, self).__init__()
+
+        self.linear_1 = nn.Linear(deep, deep_feedforward)
+        self.dropout = nn.Dropout(dropout)
+        self.linear_2 = nn.Linear(deep_feedforward, deep)
+
+    def forward(self, x):
+        x = self.dropout(F.relu(self.linear_1(x)))
+        x = self.linear_2(x)
+        return x
+
+class FloatEmbedding(nn.Module):
+    def __init__(self, deep):
+        super(FloatEmbedding, self).__init__()
+        self.linear_1 = nn.Linear(1, deep//2)
+        self.linear_2 = nn.Linear(deep//2, deep)
+
+    def forward(self, x):
+        x = x.unsqueeze(-1)
+        x = F.relu(self.linear_1(x))
+        x = self.linear_2(x)
+        return x
+
+class EncoderLayer(nn.Module):
+    def __init__(self, deep, heads, dropout=0.1):
+        super(EncoderLayer, self).__init__()
+        self.norm_1 = Norm(deep)
+        self.norm_2 = Norm(deep)
+        self.attn = MultiHeadAttention(heads, deep, dropout=dropout)
+        self.ff = FeedForward(deep, dropout=dropout)
+        self.dropout_1 = nn.Dropout(dropout)
+        self.dropout_2 = nn.Dropout(dropout)
+
+    def forward(self, x, mask):
+        x2 = self.norm_1(x)
+        x = x + self.dropout_1(self.attn(x2, x2, x2, mask))
+        x2 = self.norm_2(x)
+        x = x + self.dropout_2(self.ff(x2))
+        return x
+
+class DecoderLayer(nn.Module):
+    def __init__(self, deep, heads, dropout=0.1):
+        super(DecoderLayer, self).__init__()
+        self.norm_1 = Norm(deep)
+        self.norm_2 = Norm(deep)
+        self.norm_3 = Norm(deep)
+
+        self.dropout_1 = nn.Dropout(dropout)
+        self.dropout_2 = nn.Dropout(dropout)
+        self.dropout_3 = nn.Dropout(dropout)
+
+        self.attn_1 = MultiHeadAttention(heads, deep, dropout=dropout)
+        self.attn_2 = MultiHeadAttention(heads, deep, dropout=dropout)
+        self.ff = FeedForward(deep, dropout=dropout)
+
+    def forward(self, x, encoder_output, in_mask, out_mask):
+        x2 = self.norm_1(x)
+        x = x + self.dropout_1(self.attn_1(encoder_output, encoder_output, x2, out_mask))
+        x2 = self.norm_2(x)
+        x = x + self.dropout_2(self.attn_2(encoder_output, encoder_output, x2, in_mask))
+        x2 = self.norm_3(x)
+        x = x + self.dropout_3(self.ff(x2))
+        return x
+
+class DownBlock(nn.Module):
+    '''
+    Referring to HDRNet.
+    '''
+    def __init__(self, channel=1280, dropout=0.1):
+        super(DownBlock, self).__init__()
+        self.cpool = nn.ConstantPad1d((0, 1), 0)
+        self.maxpool = nn.MaxPool1d(kernel_size=3, stride=2)
+        self.conv = nn.Sequential(
+            nn.Conv1d(channel, channel, kernel_size=5, stride=1, padding=2),
+            nn.BatchNorm1d(channel),
+            nn.ReLU(True),
+            nn.Dropout(dropout),
+            nn.Conv1d(channel, channel, kernel_size=5, stride=1, padding=2),
+            nn.BatchNorm1d(channel),
+            nn.ReLU(True),
+            nn.Dropout(dropout),
+        )
+
+    def forward(self, x):
+        x = self.cpool(x)
+        res = self.maxpool(x)
+        x = self.conv(res)
+        x = x + res
+        return x
+
+class AddFeatEncoder(nn.Module):
+    def __init__(self, in_channel=1, out_channel=64):
+        super(AddFeatEncoder, self).__init__()
+
+    def forward(self, x):
+
+        return x
+
+class Classifier(nn.Module):
+    def __init__(self, deep=128, in_channel=514, out_channel=1, feat_k=4, dropout=0.1, size=103):
+        super(Classifier, self).__init__()
+
+    def forward(self, x):
+        print(x.shape)
+        return x
