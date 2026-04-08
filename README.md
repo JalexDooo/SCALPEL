@@ -97,7 +97,9 @@ pip install -r requirements.txt  # Python 3.9
 
 ### Step 3 — Train SCALPEL
 
-The SCALPEL model class is implemented as `m9_m1` in `models/m9.py`. Use `--model='m9_m1'` to select it:
+The SCALPEL model class is implemented as `m9_m1` in `models/m9.py`. Use `--model='m9_m1'` to select it.
+
+> **Hardware Requirements:** Due to fine-tuning of the BERT model, training is computationally intensive. Our experiments used **96 GB RAM** and **NVIDIA A100 (48 GB) / L40S (48 GB)** GPUs. A full 10-fold cross-validation training run takes **over 140 hours**. We recommend using hardware at or above this specification.
 
 ```bash
 python3 -u logicArchi.py control \
