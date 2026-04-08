@@ -73,7 +73,7 @@ SCALPEL/
 
 ### Step 0 — Download Pre-trained Weights
 
-Download the pre-trained BERT model from [Google Drive](https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link) and place the files in the root directory.
+Download the pre-trained model weights from [Google Drive](https://drive.google.com/drive/folders/1nAjj8YMkwAucOYOFtUO9Y00ldci53isI?usp=sharing) and place the files under the `ckpt/` directory.
 
 ### Step 1 — Prepare Input Data
 
