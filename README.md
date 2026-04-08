@@ -76,7 +76,7 @@ SCALPEL/
 Download the following pre-trained weights and place them in the specified directories:
 
 - **BERT model** → [Google Drive](https://drive.google.com/drive/folders/1UfnmEOYFOm4fY8975KfVqlVn0kRP59fo?usp=drive_link) — place files in the root directory
-- **Trained SCALPEL checkpoints** → [Google Drive](https://drive.google.com/drive/folders/1nAjj8YMkwAucOYOFtUO9Y00ldci53isI?usp=sharing) — place files under `ckpt/`
+- **Trained SCALPEL checkpoints (`m9_m1`)** → [Google Drive](https://drive.google.com/drive/folders/1nAjj8YMkwAucOYOFtUO9Y00ldci53isI?usp=sharing) — place files under `ckpt/`
 
 ### Step 1 — Prepare Input Data
 
@@ -97,12 +97,14 @@ pip install -r requirements.txt  # Python 3.9
 
 ### Step 3 — Train SCALPEL
 
+The SCALPEL model class is implemented as `m9_m1` in `models/m9.py`. Use `--model='m9_m1'` to select it:
+
 ```bash
 python3 -u logicArchi.py control \
   --gpu_ids=[0] \
   --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' \
   --data_des='random' \
-  --model='SCALPEL' \
+  --model='m9_m1' \
   --dataset='BertOnehotLoader30' \
   --lr=1e-3 \
   --data_path='other_model_data/ours/demo_data.csv'
@@ -117,7 +119,7 @@ python3 -u logicArchi.py val \
   --gpu_ids=[0] \
   --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_relatelen_utrrate' \
   --data_des='random' \
-  --model='SCALPEL' \
+  --model='m9_m1' \
   --dataset='BertOnehotLoader30' \
   --data_path={Your validation file path}
 ```
