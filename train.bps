@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N Ca13_m9_model_seq_bert_fold_mfe_icshape_binding_rpkm_relatelen_utrrate
+#PBS -l walltime=72:00:00
+#PBS -l select=1:ncpus=1:mem=96gb:ngpus=1:gpu_type=L40S
+#PBS -j oe
+#PBS -o /rds/general/user/jsun5/home/Code/bashLog/Ca13_m9_model_seq_bert_fold_mfe_icshape_binding_rpkm_relatelen_utrrate.log
+
+# :ngpus=1:gpu_type=L40S
+# GPU RTX6000 24G, A40 48G, A100 40G, L40S 48G
+module load PyTorch/2.1.2-foss-2023a-CUDA-12.1.1
+source cas13env/bin/activate
+cd Code/Ca13TransformerDesigned
+
+python -u logicArchi.py control --gpu_ids=[0] --model_des='seq_bert_fold_mfe1_mfe2_icshape_binding_rpkm_relatelen_utrrate' --data_des='random' --model='m9_m1' --dataset='BertOnehotLoader30' --lr=1e-3 --max_epoch=100
+
+echo 'Task DONE '

@@ -1,0 +1,17 @@
+# Model weights (too large for GitHub, host on Google Drive instead)
+ckpt/
+*.pth
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
