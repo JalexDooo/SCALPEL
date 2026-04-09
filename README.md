@@ -189,10 +189,10 @@ If you use SCALPEL in your research, please cite:
 @article{lu2025scalpel,
   title     = {Deciphering Cellular Context for Efficient and Cell-Type Specific
                CRISPR-Cas13d gRNA Design using \textit{in vivo} RNA structure and deep learning},
-  author    = {**},
-  journal   = {**},
-  year      = {2025},
-  note      = {**}
+  author    = {Suiru Lu*, Jindong Sun*, Chengqian Wang*, Yongkang Tang, Liangyu Li, Shaozhen Yin, Junhao Wang, Jingwen Wang, Jiasheng Wang, Ming Shao#, Lei Sun#},
+  journal   = {Nature Biomedical Engineering},
+  year      = {2026},
+  note      = {Under Review 2..}
 }
 ```
 
