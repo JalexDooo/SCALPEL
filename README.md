@@ -42,6 +42,8 @@ Leveraging this cell context information, along with approximately 290,000 RfxCa
 
 SCALPEL significantly outperforms existing models and, most importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across multiple cell lines demonstrate that cellular context significantly influences gRNA performance, underscoring the feasibility of **cell type-specific knockdown** by targeting structural dynamic regions. SCALPEL also facilitates designing highly efficient virus-targeting gRNAs and gRNAs that robustly knockdown maternal transcripts essential for early zebrafish development.
 
+Official Online Predicted Website: [SCALPEL](https://sunlab.qd.sdu.edu.cn/SCALPEL)
+
 ---
 
 ## ✨ Key Features
@@ -133,20 +135,27 @@ Refer to `val.sh` for more usage examples.
 ## 📈 Results
 
 <p align="center">
+  <img src="Figs/res.png" alt="Fig." width="380"/>
+</p>
+<p align="center">
+  <b>Fig.</b> &nbsp; Compared model performance.
+</p>
+
+<!-- <p align="center">
   <img src="Figs/res1.jpg" alt="Fig.1" width="380"/>
 </p>
 <p align="center">
   <b>Fig. 1</b> &nbsp; <i>In vivo</i> information — including cell type-specific target RNA structure and protein binding probability — significantly improves model performance.
-</p>
+</p> -->
 
-<br>
+<!-- <br>
 
 <p align="center">
   <img src="Figs/res2.jpg" alt="Fig.2" width="520"/>
 </p>
 <p align="center">
   <b>Fig. 2</b> &nbsp; In our validation screen, SCALPEL performed exceptionally well in predicting gRNAs with significantly dynamic efficacy.
-</p>
+</p> -->
 
 ---
 
