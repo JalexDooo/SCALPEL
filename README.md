@@ -135,7 +135,7 @@ Refer to `val.sh` for more usage examples.
 ## 📈 Results
 
 <p align="center">
-  <img src="Figs/res.png" alt="Fig." width="380"/>
+  <img src="Figs/res.png" alt="Fig." width="580"/>
 </p>
 <p align="center">
   <b>Fig.</b> &nbsp; Compared model performance.
