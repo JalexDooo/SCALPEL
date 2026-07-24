@@ -32,7 +32,7 @@
 
 The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. By large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of **_in vivo_ target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
 
-Leveraging this cell context information, along with approximately 290,000 RfxCas13d screening data, we developed **SCALPEL**, a deep learning model that predicts gRNA performance across various cellular environments. SCALPEL integrates:
+Leveraging this cell context information, along with approximately 290K RfxCas13d screening data, we developed **SCALPEL**, a deep learning model that predicts gRNA performance across various cellular environments. SCALPEL integrates:
 
 | Feature | Description |
 |---|---|
