@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧬 SCALPEL: S͎pecific CRISPR-C͎as13d gRNA͎ design through deep L͎earning P͎rediction using *in vivo* E͎xperimentaL͎ RNA structure and binding information
+# 🧬 SCALPEL: S͎pecific CRISPR-C͎as13d gRNA͎ design through deep L͎earning P͎rediction using endogenous E͎xperimentaL͎ RNA structure and binding information
 
 <p>
   <a href="https://github.com/JalexDooo/SCALPEL">
@@ -20,7 +20,7 @@
   </a>
 </p>
 
-*Official Implementation of* **SCALPEL** *– Deciphering cellular context for efficient and cell type-specific CRISPR-Cas13d gRNA design using* ***in vivo*** *RNA structure and deep learning*
+*Official Implementation of* **SCALPEL** *– Deciphering cellular context for efficient and cell type-specific CRISPR-Cas13d gRNA design using endogenous RNA structure and deep learning*
 
 ![SCALPEL Architecture](Figs/model.png)
 
@@ -30,14 +30,14 @@
 
 ## 🔬 Abstract
 
-The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. By large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of **_in vivo_ target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
+The efficacy and tissue specificity of RNA therapeutics are critical for clinical translation. By large-scale profiling of the dynamic RNA structurome across four cell lines, we systematically characterized the impact of **_endogenous_ target RNA structure** and **RNA-protein interactions** on CRISPR/Cas13d gRNA activity. We identified the structural patterns of high-efficacy gRNA targets and observed that structural differences can lead to variations in efficacy across different cellular contexts. By stabilizing single-stranded structure, RNA-binding proteins also enhanced gRNA efficacy.
 
 Leveraging this cell context information, along with approximately 290K RfxCas13d screening data, we developed **SCALPEL**, a deep learning model that predicts gRNA performance across various cellular environments. SCALPEL integrates:
 
 | Feature | Description |
 |---|---|
 | 🔤 **Sequence** | Both target and gRNA sequence |
-| 🧬 **Structure** | *In vivo* icSHAPE data across different cell lines |
+| 🧬 **Structure** | Endogenous icSHAPE data across different cell lines |
 | 🔗 **Binding** | Cell type-specific RBP binding profiles |
 
 SCALPEL significantly outperforms existing models and, most importantly, enables **cell type-specific prediction** of gRNA activity. Validation screens across multiple cell lines demonstrate that cellular context significantly influences gRNA performance, underscoring the feasibility of **cell type-specific knockdown** by targeting structural dynamic regions. SCALPEL also facilitates designing highly efficient virus-targeting gRNAs and gRNAs that robustly knockdown maternal transcripts essential for early zebrafish development.
@@ -48,7 +48,7 @@ Official Online Predicted Website: [SCALPEL](https://sunlab.qd.sdu.edu.cn/SCALPE
 
 ## ✨ Key Features
 
-- 🧬 Integrates *in vivo* RNA secondary structure data and cell type-specific RBP binding profiles
+- 🧬 Integrates endogenous RNA secondary structure data and cell type-specific RBP binding profiles
 - 🤖 Transformer-based architecture for deep context modeling
 - 🎯 Accurately predicts on-target effects of gRNAs
 - 🔬 Assists in designing high-specificity gRNAs for different cellular contexts
@@ -197,7 +197,7 @@ If you use SCALPEL in your research, please cite:
 ```bibtex
 @article{lu2025scalpel,
   title     = {Deciphering Cellular Context for Efficient and Cell-Type Specific
-               CRISPR-Cas13d gRNA Design using in vivo RNA structure and deep learning},
+               CRISPR-Cas13d gRNA Design using endogenous RNA structure and deep learning},
   author    = {Suiru Lu*, Jindong Sun*, Chengqian Wang*, Yongkang Tang, Liangyu Li, Shaozhen Yin, Junhao Wang, Jingwen Wang, Jiasheng Wang, Ming Shao#, Lei Sun#},
   journal   = {Nature Biomedical Engineering},
   year      = {2026},
