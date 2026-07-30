@@ -20,7 +20,7 @@
   </a>
 </p>
 
-*Official Implementation of* **SCALPEL** *– Deciphering cellular context for efficient and cell type-specific CRISPR-Cas13d gRNA design using endogenous RNA structure and deep learning*
+Deciphering cellular context for efficient and cell type-specific CRISPR-Cas13d gRNA design using endogenous RNA structure and deep learning*
 
 ![SCALPEL Architecture](Figs/model.png)
 
@@ -52,7 +52,7 @@ Official Online Predicted Website: [SCALPEL](https://sunlab.qd.sdu.edu.cn/SCALPE
 - 🤖 Transformer-based architecture for deep context modeling
 - 🎯 Accurately predicts on-target effects of gRNAs
 - 🔬 Assists in designing high-specificity gRNAs for different cellular contexts
-- 🐟 Facilitates the design of gRNAs for animal models
+- 🐟 Facilitates the design of gRNAs for animal models and patient-derived organoids
 
 ---
 
@@ -195,14 +195,7 @@ Special thanks to all community members and beta testers who provided feedback d
 If you use SCALPEL in your research, please cite:
 
 ```bibtex
-@article{lu2025scalpel,
-  title     = {Deciphering Cellular Context for Efficient and Cell-Type Specific
-               CRISPR-Cas13d gRNA Design using endogenous RNA structure and deep learning},
-  author    = {Suiru Lu*, Jindong Sun*, Chengqian Wang*, Yongkang Tang, Liangyu Li, Shaozhen Yin, Junhao Wang, Jingwen Wang, Jiasheng Wang, Ming Shao#, Lei Sun#},
-  journal   = {Nature Biomedical Engineering},
-  year      = {2026},
-  note      = {Under Review 2..}
-}
+***
 ```
 
 ---
