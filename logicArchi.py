@@ -290,7 +290,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
 def test(test_loader, cfg, device, ckpt_options, params):
     output_path = 'predicts/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '|' + '/'
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.makedirs(output_path)
 
     model = getattr(models, cfg.model)(des=cfg.model_des)
     criterion = getattr(loss_functions, cfg.loss_function)()
