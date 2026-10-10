@@ -85,19 +85,19 @@ def train(train_loader, test_loader, cfg, device, fold, params):
     # save path
     ckpt_path = 'ckpt/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(ckpt_path):
-        os.mkdir(ckpt_path)
+        os.makedirs(ckpt_path)
     
     loss_path = 'loss/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(loss_path):
-        os.mkdir(loss_path)
+        os.makedirs(loss_path)
     
     output_path = 'output/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.makedirs(output_path)
 
     train_log_path = 'train_log/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(train_log_path):
-        os.mkdir(train_log_path)
+        os.makedirs(train_log_path)
 
     model = getattr(models, cfg.model)(des=cfg.model_des)
     criterion = getattr(loss_functions, cfg.loss_function)()
@@ -442,7 +442,8 @@ def control(**kwargs):
     #     path = '/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/train_random.csv'
 
     # You need provided the all data files to get normalization params.
-    origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+    # origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+    origin = 'other_model_data/ours/demo_data.csv'
 
     data = pd.read_csv(path, sep=',', encoding='GBK', header=None)
     data[11] = data[11].replace('na', float(0.)) # h_mfe
