@@ -116,7 +116,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
         model.train()
         for batch_idx, sample in enumerate(train_loader):
             optimizer.zero_grad()
-            output = model(sample[:22], device)
+            output = model(sample[:24], device)
             lbl = sample[9].to(device)
             loss = criterion(output, lbl)
             loss.backward()
@@ -138,7 +138,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
         csv_predicts = []
         model.eval()
         for batch_idx, sample in enumerate(test_loader):
-            output = model(sample[:22], device)
+            output = model(sample[:24], device)
             lbl = sample[9].to(device)
 
             loss = criterion(output, lbl)
@@ -157,7 +157,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
             csv_rpkm, csv_g_mfe, csv_h_mfe, \
             csv_st_relate_len, csv_ed_relate_len, \
             csv_utr5_rate, csv_cds_rate, csv_utr3_rate, \
-            csv_read_depth, csv_norm_label = sample[22:]
+            csv_read_depth, csv_norm_label = sample[24:]
             csv_labels.append(csv_label)
             csv_target_genes.append(csv_target_gene)
             csv_models.append(csv_model)
@@ -313,7 +313,7 @@ def test(test_loader, cfg, device, ckpt_options, params):
 
     model.eval()
     for batch_idx, sample in enumerate(test_loader):
-        output = model(sample[:22], device)
+        output = model(sample[:24], device)
         lbl = sample[9].to(device)
 
         p_np = output.to(device='cpu').detach().numpy()
@@ -325,7 +325,7 @@ def test(test_loader, cfg, device, ckpt_options, params):
         csv_rpkm, csv_g_mfe, csv_h_mfe, \
         csv_st_relate_len, csv_ed_relate_len, \
         csv_utr5_rate, csv_cds_rate, csv_utr3_rate, \
-        csv_read_depth, csv_norm_label = sample[22:]
+        csv_read_depth, csv_norm_label = sample[24:]
         csv_labels.append(csv_label)
         csv_target_genes.append(csv_target_gene)
         csv_models.append(csv_model)

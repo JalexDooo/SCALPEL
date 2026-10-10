@@ -335,30 +335,64 @@ class BertOnehotLoader30(DataLoader):
                 p11 = p11
                 p22 = p11+self.max_len
 
-            # icshape
+            # Back to Phase 14 (0.9070) extraction
             if self.icshape[idx] != 'na' and self.icshape[idx] != 'n,a':
                 ics = self.icshape[idx].split(',')
-                ics = ics[p11:p22]
-                icss = [float(i) for i in ics]
+                # Safe slice
+                ics_sliced = ics[max(0, p11):min(len(ics), p22)]
+                icss = [float(i) for i in ics_sliced]
+
+                if len(icss) < self.max_len:
+                    icss.extend([float(0)] * (self.max_len - len(icss)))
+                else:
+                    icss = icss[:self.max_len]
+
                 self.icshape[idx] = np.array(icss)
             else:
-                icss = []
-                for i in range(self.max_len):
-                    icss.append(float(-1.))
-                self.icshape[idx] = np.array(icss)
+                self.icshape[idx] = np.array([float(0)] * self.max_len)
 
             # target RNA -> Bert
             self.t_seq[idx] = self.extt_seq[idx][p11:p22]
 
-        tokenizer = BertTokenizer.from_pretrained('./BERT_Model', do_lower_case=False)
-        model = BertModel.from_pretrained('./BERT_Model')
-        model = model.to(device)
-        model = model.eval()
-        # print(self.t_seq.shape)
-        
-        self.bert_embedding = FixRNABert(list(self.t_seq), model, tokenizer, device, 3, self.max_len)
+        self.tokenizer = BertTokenizer.from_pretrained('./BERT_Model', do_lower_case=False)
+        # model = BertModel.from_pretrained('./BERT_Model')
+        # model = model.to(device)
+        # model = model.eval()
 
-        # print(bert_embedding.shape) # (N, 28, 768)
+        # self.bert_embedding = FixRNABert(list(self.t_seq), model, tokenizer, device, 3, self.max_len)
+
+        # Pre-tokenize sentence pairs (gRNA and target RNA)
+        k = 3
+        sequences = []
+        for g, t in zip(self.g_seq, self.t_seq):
+            g = g.strip()
+            t = t.strip()
+
+            # Ensure sequences the max length
+            if len(g) < self.max_len:
+                g = g + 'N'*(self.max_len-len(g))
+            if len(t) < self.max_len:
+                t = t + 'N'*(self.max_len-len(t))
+
+            # Convert to kmers
+            g_kmers = " ".join([g[x:x+k] for x in range(len(g)-k+1)])
+            t_kmers = " ".join([t[x:x+k] for x in range(len(t)-k+1)])
+
+            # Sentence Pair
+            sequences.append((g_kmers, t_kmers))
+
+        # Tokenize pairs: [CLS] g_kmers [SEP] t_kmers [SEP]
+        encoded_inputs = self.tokenizer.batch_encode_plus(
+            sequences,
+            add_special_tokens=True,
+            padding='max_length',
+            max_length=64,
+            truncation=True,
+            return_tensors='pt'
+        )
+        self.input_ids = encoded_inputs['input_ids']
+        self.attention_mask = encoded_inputs['attention_mask']
+        self.token_type_ids = encoded_inputs['token_type_ids']
 
     def __len__(self):
         return len(self.g_seq)
@@ -429,7 +463,9 @@ class BertOnehotLoader30(DataLoader):
                 rpkm, \
                 st_relate_len, ed_relate_len, \
                 utr5_rate, cds_rate, utr3_rate, self.read_depth[idx], \
-                self.cell_line[idx], self.target_gene[idx], self.bert_embedding[idx], self.label[idx], \
+                self.cell_line[idx], self.target_gene[idx], \
+                self.input_ids[idx], self.attention_mask[idx], self.token_type_ids[idx], \
+                self.label[idx], \
                 \
                 self.csv_model[idx],self.csv_gRNA_id[idx], self.csv_ms_match_idt[idx], self.csv_gRNA_seq[idx], \
                 self.csv_tRNA_seq[idx], self.csv_g_fold[idx], self.csv_icshape[idx], self.csv_binding_p[idx], \
