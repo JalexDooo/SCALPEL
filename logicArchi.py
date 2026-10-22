@@ -85,19 +85,19 @@ def train(train_loader, test_loader, cfg, device, fold, params):
     # save path
     ckpt_path = 'ckpt/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(ckpt_path):
-        os.mkdir(ckpt_path)
+        os.makedirs(ckpt_path)
     
     loss_path = 'loss/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(loss_path):
-        os.mkdir(loss_path)
+        os.makedirs(loss_path)
     
     output_path = 'output/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.makedirs(output_path)
 
     train_log_path = 'train_log/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '/'
     if not os.path.exists(train_log_path):
-        os.mkdir(train_log_path)
+        os.makedirs(train_log_path)
 
     model = getattr(models, cfg.model)(des=cfg.model_des)
     criterion = getattr(loss_functions, cfg.loss_function)()
@@ -116,7 +116,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
         model.train()
         for batch_idx, sample in enumerate(train_loader):
             optimizer.zero_grad()
-            output = model(sample[:22], device)
+            output = model(sample[:24], device)
             lbl = sample[9].to(device)
             loss = criterion(output, lbl)
             loss.backward()
@@ -138,7 +138,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
         csv_predicts = []
         model.eval()
         for batch_idx, sample in enumerate(test_loader):
-            output = model(sample[:22], device)
+            output = model(sample[:24], device)
             lbl = sample[9].to(device)
 
             loss = criterion(output, lbl)
@@ -157,7 +157,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
             csv_rpkm, csv_g_mfe, csv_h_mfe, \
             csv_st_relate_len, csv_ed_relate_len, \
             csv_utr5_rate, csv_cds_rate, csv_utr3_rate, \
-            csv_read_depth, csv_norm_label = sample[22:]
+            csv_read_depth, csv_norm_label = sample[24:]
             csv_labels.append(csv_label)
             csv_target_genes.append(csv_target_gene)
             csv_models.append(csv_model)
@@ -290,7 +290,7 @@ def train(train_loader, test_loader, cfg, device, fold, params):
 def test(test_loader, cfg, device, ckpt_options, params):
     output_path = 'predicts/' + cfg.model_des + '|' + cfg.data_des + '|' + cfg.model + '|' + '/'
     if not os.path.exists(output_path):
-        os.mkdir(output_path)
+        os.makedirs(output_path)
 
     model = getattr(models, cfg.model)(des=cfg.model_des)
     criterion = getattr(loss_functions, cfg.loss_function)()
@@ -313,7 +313,7 @@ def test(test_loader, cfg, device, ckpt_options, params):
 
     model.eval()
     for batch_idx, sample in enumerate(test_loader):
-        output = model(sample[:22], device)
+        output = model(sample[:24], device)
         lbl = sample[9].to(device)
 
         p_np = output.to(device='cpu').detach().numpy()
@@ -325,7 +325,7 @@ def test(test_loader, cfg, device, ckpt_options, params):
         csv_rpkm, csv_g_mfe, csv_h_mfe, \
         csv_st_relate_len, csv_ed_relate_len, \
         csv_utr5_rate, csv_cds_rate, csv_utr3_rate, \
-        csv_read_depth, csv_norm_label = sample[22:]
+        csv_read_depth, csv_norm_label = sample[24:]
         csv_labels.append(csv_label)
         csv_target_genes.append(csv_target_gene)
         csv_models.append(csv_model)
@@ -442,7 +442,8 @@ def control(**kwargs):
     #     path = '/data3/SJD/Ca13TransformerDesigned3/other_model_data/ours/train_random.csv'
 
     # You need provided the all data files to get normalization params.
-    origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+    # origin = '/home/postphd/SJD/cas13d_data/final_data/new-all_merge_remove_repeat_containmismatch_rpkm_cds_utrinfo_depth.csv'
+    origin = 'other_model_data/ours/demo_data.csv'
 
     data = pd.read_csv(path, sep=',', encoding='GBK', header=None)
     data[11] = data[11].replace('na', float(0.)) # h_mfe
